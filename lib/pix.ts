@@ -14,6 +14,10 @@ function field(id: string, value: string): string {
   return `${id}${len}${value}`
 }
 
+function toAscii(str: string): string {
+  return str.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\x20-\x7E]/g, '')
+}
+
 export function generatePixPayload(
   pixKey: string,
   receiverName: string,
@@ -21,9 +25,10 @@ export function generatePixPayload(
   amount?: number,
   description?: string
 ): string {
+  const safeDesc = description ? toAscii(description).slice(0, 72) : ''
   const merchantAccountInfo = field('00', 'BR.GOV.BCB.PIX') +
     field('01', pixKey) +
-    (description ? field('02', description.slice(0, 72)) : '')
+    (safeDesc ? field('02', safeDesc) : '')
 
   const payload =
     field('00', '01') +
