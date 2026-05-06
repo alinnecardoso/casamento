@@ -1,3 +1,10 @@
+function toAscii(str: string): string {
+  return str
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^\x00-\x7F]/g, '')
+}
+
 function crc16(str: string): string {
   let crc = 0xffff
   for (let i = 0; i < str.length; i++) {
@@ -23,7 +30,7 @@ export function generatePixPayload(
 ): string {
   const merchantAccountInfo = field('00', 'BR.GOV.BCB.PIX') +
     field('01', pixKey) +
-    (description ? field('02', description.slice(0, 72)) : '')
+    (description ? field('02', toAscii(description).slice(0, 72)) : '')
 
   const payload =
     field('00', '01') +
@@ -32,8 +39,8 @@ export function generatePixPayload(
     field('53', '986') +
     (amount ? field('54', amount.toFixed(2)) : '') +
     field('58', 'BR') +
-    field('59', receiverName.slice(0, 25)) +
-    field('60', city.slice(0, 15)) +
+    field('59', toAscii(receiverName).slice(0, 25)) +
+    field('60', toAscii(city).slice(0, 15)) +
     field('62', field('05', '***'))
 
   return payload + field('63', crc16(payload + '6304'))
