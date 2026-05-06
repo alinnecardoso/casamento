@@ -8,6 +8,26 @@ import PixModal from '@/components/ui/PixModal'
 import Image from 'next/image'
 import { Gift } from '@/lib/types'
 
+function ImageWithFallback({ src, alt }: { src: string; alt: string }) {
+  const [error, setError] = useState(false)
+  if (error) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <span className="text-4xl">🎁</span>
+      </div>
+    )
+  }
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      className="object-cover group-hover:scale-105 transition-transform duration-500"
+      onError={() => setError(true)}
+    />
+  )
+}
+
 interface Props {
   gifts: Gift[]
   pixKey: string
@@ -15,8 +35,14 @@ interface Props {
   heroImageUrl?: string
 }
 
+const PAGE_SIZE = 9
+
 export default function PresentsClient({ gifts, pixKey, pixName, heroImageUrl }: Props) {
   const [modal, setModal] = useState<{ gift?: Gift; open: boolean }>({ open: false })
+  const [visible, setVisible] = useState(PAGE_SIZE)
+
+  const visibleGifts = gifts.slice(0, visible)
+  const remaining = gifts.length - visible
 
   return (
     <PageTransition>
@@ -62,7 +88,7 @@ export default function PresentsClient({ gifts, pixKey, pixName, heroImageUrl }:
 
         {/* Grade de presentes */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {gifts.map((gift, i) => (
+          {visibleGifts.map((gift, i) => (
             <motion.div
               key={gift.id}
               initial={{ opacity: 0, y: 30 }}
@@ -74,12 +100,7 @@ export default function PresentsClient({ gifts, pixKey, pixName, heroImageUrl }:
               {/* Imagem */}
               <div className="relative h-48 overflow-hidden bg-[#f5f0e8]">
                 {gift.image_url ? (
-                  <Image
-                    src={gift.image_url}
-                    alt={gift.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                  <ImageWithFallback src={gift.image_url} alt={gift.name} />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <span className="text-4xl">🎁</span>
@@ -104,9 +125,9 @@ export default function PresentsClient({ gifts, pixKey, pixName, heroImageUrl }:
                   {pixKey && (
                     <button
                       onClick={() => setModal({ gift, open: true })}
-                      className="flex-1 py-2.5 bg-[#c9a96e] text-white text-xs uppercase tracking-wider hover:bg-[#a07840] transition-colors rounded-xl font-medium"
+                      className="flex-1 py-2.5 bg-[#c9a96e] text-white text-xs uppercase tracking-wider hover:bg-[#a07840] active:scale-95 transition-all rounded-xl font-medium shadow-sm hover:shadow-md cursor-pointer"
                     >
-                      PIX
+                      {gift.store_link ? 'PIX' : 'Presentear via PIX'}
                     </button>
                   )}
                   {gift.store_link && (
@@ -114,7 +135,7 @@ export default function PresentsClient({ gifts, pixKey, pixName, heroImageUrl }:
                       href={gift.store_link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 py-2.5 border border-[#c9a96e] text-[#c9a96e] text-xs uppercase tracking-wider text-center hover:bg-[#c9a96e] hover:text-white transition-all rounded-xl font-medium"
+                      className="flex-1 py-2.5 border border-[#c9a96e] text-[#c9a96e] text-xs uppercase tracking-wider text-center hover:bg-[#c9a96e] hover:text-white active:scale-95 transition-all rounded-xl font-medium shadow-sm hover:shadow-md"
                     >
                       Ver na Loja
                     </a>
@@ -127,6 +148,17 @@ export default function PresentsClient({ gifts, pixKey, pixName, heroImageUrl }:
             </motion.div>
           ))}
         </div>
+
+        {remaining > 0 && (
+          <div className="text-center mt-12">
+            <button
+              onClick={() => setVisible((v) => v + PAGE_SIZE)}
+              className="px-10 py-3 border border-[#c9a96e] text-[#c9a96e] text-sm uppercase tracking-widest hover:bg-[#c9a96e] hover:text-white active:scale-95 transition-all rounded-full"
+            >
+              Ver mais {remaining} presente{remaining !== 1 ? 's' : ''}
+            </button>
+          </div>
+        )}
       </div>
 
       <PixModal
