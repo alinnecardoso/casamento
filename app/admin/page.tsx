@@ -5,7 +5,7 @@ export default async function AdminDashboard() {
     supabase.from('rsvp_responses').select('*', { count: 'exact', head: true }).eq('attending', true),
     supabase.from('rsvp_responses').select('*', { count: 'exact', head: true }).eq('attending', false),
     supabase.from('gifts').select('*', { count: 'exact', head: true }).eq('available', true),
-    supabaseAdmin.from('payment_confirmations').select('*', { count: 'exact', head: true }).then((r) => r).catch(() => ({ count: 0 })),
+    supabaseAdmin.from('payment_confirmations').select('*', { count: 'exact', head: true }).then((r) => r, () => ({ count: 0 as number | null })),
   ])
 
   const cards = [
