@@ -1,6 +1,6 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY ?? 'no-key')
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 interface RsvpData {
   guest_name: string
@@ -31,7 +31,7 @@ export async function sendRsvpToCoupleEmail(data: RsvpData, coupleEmail: string,
       ${data.message ? `<p><strong>Mensagem:</strong> <em>"${data.message}"</em></p>` : ''}
     `
 
-  await resend.emails.send({
+  await resend?.emails.send({
     from: 'Casamento <onboarding@resend.dev>',
     to: coupleEmail,
     subject,
@@ -54,7 +54,7 @@ export async function sendRsvpToCoupleEmail(data: RsvpData, coupleEmail: string,
 export async function sendRsvpConfirmationToGuest(data: RsvpData, coupleName: string, weddingDate: string) {
   if (!process.env.RESEND_API_KEY || !data.email || !data.attending) return
 
-  await resend.emails.send({
+  await resend?.emails.send({
     from: 'Casamento <onboarding@resend.dev>',
     to: data.email,
     subject: `Sua presença foi confirmada! 🎉`,
