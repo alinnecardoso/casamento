@@ -23,12 +23,12 @@ export default function RSVPForm() {
   })
   const checkTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const checkExisting = (name: string) => {
+  const checkExisting = (phone: string) => {
     if (checkTimeout.current) clearTimeout(checkTimeout.current)
     setExistingRsvp(null)
-    if (name.trim().length < 3) return
+    if (phone.replace(/\D/g, '').length < 8) return
     checkTimeout.current = setTimeout(async () => {
-      const res = await fetch(`/api/rsvp/check?name=${encodeURIComponent(name.trim())}`)
+      const res = await fetch(`/api/rsvp/check?phone=${encodeURIComponent(phone.trim())}`)
       const data = await res.json()
       if (data.found) setExistingRsvp(data)
     }, 600)
@@ -55,6 +55,10 @@ export default function RSVPForm() {
     if (attending === null) return
     if (!form.guest_name.trim()) {
       toast.error('Por favor, informe seu nome.')
+      return
+    }
+    if (!form.phone.trim()) {
+      toast.error('Por favor, informe seu WhatsApp.')
       return
     }
     setLoading(true)
@@ -129,8 +133,29 @@ export default function RSVPForm() {
               <input
                 type="text" required
                 value={form.guest_name}
+                onChange={(e) => setForm({ ...form, guest_name: e.target.value })}
+                className="w-full border border-[#e8d5b0] bg-white px-4 py-3 text-sm text-[#2c2c2c] focus:outline-none focus:border-[#c9a96e] transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-[#4a4a4a] mb-1">E-mail (opcional)</label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="w-full border border-[#e8d5b0] bg-white px-4 py-3 text-sm text-[#2c2c2c] focus:outline-none focus:border-[#c9a96e] transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-[#4a4a4a] mb-1">WhatsApp *</label>
+              <input
+                type="tel" required
+                placeholder="(11) 99999-9999"
+                value={form.phone}
                 onChange={(e) => {
-                  setForm({ ...form, guest_name: e.target.value })
+                  setForm({ ...form, phone: e.target.value })
                   checkExisting(e.target.value)
                 }}
                 className="w-full border border-[#e8d5b0] bg-white px-4 py-3 text-sm text-[#2c2c2c] focus:outline-none focus:border-[#c9a96e] transition-colors"
@@ -147,30 +172,15 @@ export default function RSVPForm() {
                 >
                   <span className="text-lg leading-none mt-0.5">ℹ️</span>
                   <p>
-                    Encontramos uma confirmação com esse nome de{' '}
-                    <strong>{new Date(existingRsvp.created_at).toLocaleDateString('pt-BR')}</strong>{' '}
-                    — você havia confirmado que{' '}
+                    Encontramos uma confirmação de <strong>{existingRsvp.guest_name}</strong> com esse número,
+                    feita em <strong>{new Date(existingRsvp.created_at).toLocaleDateString('pt-BR')}</strong>.
+                    Você havia confirmado que{' '}
                     <strong>{existingRsvp.attending ? 'iria comparecer' : 'não poderia comparecer'}</strong>.
                     Ao enviar, sua resposta será atualizada.
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
-
-            {[
-              { name: 'email', label: 'E-mail (opcional)', type: 'email' },
-              { name: 'phone', label: 'WhatsApp (opcional)', type: 'tel' },
-            ].map((f) => (
-              <div key={f.name}>
-                <label className="block text-xs uppercase tracking-widest text-[#4a4a4a] mb-1">{f.label}</label>
-                <input
-                  type={f.type}
-                  value={form[f.name as keyof typeof form] as string}
-                  onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}
-                  className="w-full border border-[#e8d5b0] bg-white px-4 py-3 text-sm text-[#2c2c2c] focus:outline-none focus:border-[#c9a96e] transition-colors"
-                />
-              </div>
-            ))}
 
             {attending && (
               <div>

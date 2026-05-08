@@ -1,21 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
+function normalizePhone(phone: string): string {
+  const digits = phone.replace(/\D/g, '')
+  if (digits.length === 10 || digits.length === 11) return '55' + digits
+  return digits
+}
+
 export async function POST(req: NextRequest) {
   const body = await req.json()
 
   if (!body.guest_name?.trim()) {
     return NextResponse.json({ error: 'Nome é obrigatório' }, { status: 400 })
   }
+  if (!body.phone?.trim()) {
+    return NextResponse.json({ error: 'WhatsApp é obrigatório' }, { status: 400 })
+  }
 
   const companions: string[] = Array.isArray(body.companion_names)
     ? body.companion_names.map((n: string) => n.trim()).filter(Boolean)
     : []
 
+  const phone = normalizePhone(body.phone)
+
   const payload = {
     guest_name: body.guest_name.trim(),
     email: body.email?.trim() || null,
-    phone: body.phone?.trim() || null,
+    phone,
     attending: body.attending,
     guests_count: 1 + companions.length,
     companion_names: companions.length > 0 ? JSON.stringify(companions) : null,
@@ -27,11 +38,10 @@ export async function POST(req: NextRequest) {
     process.env.SUPABASE_SERVICE_KEY!
   )
 
-  // Check if name already exists (case-insensitive)
   const { data: existing } = await supabase
     .from('rsvp_responses')
     .select('id')
-    .ilike('guest_name', payload.guest_name)
+    .eq('phone', phone)
     .limit(1)
     .single()
 
@@ -56,15 +66,13 @@ export async function POST(req: NextRequest) {
       const sheets = google.sheets({ version: 'v4', auth })
 
       if (existing) {
-        // Find and update the existing row in the sheet
+        // Find and update the existing row by phone (column D)
         const sheetData = await sheets.spreadsheets.values.get({
           spreadsheetId: process.env.GOOGLE_SHEET_ID,
-          range: 'Respostas!A:B',
+          range: 'Respostas!D:D',
         })
         const rows = sheetData.data.values || []
-        const rowIndex = rows.findIndex(
-          (r) => r[1]?.toLowerCase() === payload.guest_name.toLowerCase()
-        )
+        const rowIndex = rows.findIndex((r) => normalizePhone(r[0] || '') === phone)
         if (rowIndex > 0) {
           await sheets.spreadsheets.values.update({
             spreadsheetId: process.env.GOOGLE_SHEET_ID,
@@ -75,7 +83,7 @@ export async function POST(req: NextRequest) {
                 new Date().toLocaleString('pt-BR'),
                 payload.guest_name,
                 payload.email || '',
-                payload.phone || '',
+                phone,
                 payload.attending ? 'Sim' : 'Não',
                 payload.guests_count,
                 companions.join(', '),
@@ -94,7 +102,7 @@ export async function POST(req: NextRequest) {
               new Date().toLocaleString('pt-BR'),
               payload.guest_name,
               payload.email || '',
-              payload.phone || '',
+              phone,
               payload.attending ? 'Sim' : 'Não',
               payload.guests_count,
               companions.join(', '),
