@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
       const sheets = google.sheets({ version: 'v4', auth })
       await sheets.spreadsheets.values.append({
         spreadsheetId: process.env.GOOGLE_SHEET_ID,
-        range: 'Respostas!A:I',
+        range: 'Respostas!A:H',
         valueInputOption: 'USER_ENTERED',
         requestBody: {
           values: [[
@@ -56,7 +56,6 @@ export async function POST(req: NextRequest) {
             body.attending ? 'Sim' : 'Não',
             1 + companions.length,
             companions.join(', '),
-            body.dietary_restrictions || '',
             body.message || '',
           ]],
         },
