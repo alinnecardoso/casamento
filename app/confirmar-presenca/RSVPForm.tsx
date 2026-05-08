@@ -10,8 +10,25 @@ export default function RSVPForm() {
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({
     guest_name: '', email: '', phone: '',
-    guests_count: 1, dietary_restrictions: '', message: '',
+    companion_names: [] as string[],
+    dietary_restrictions: '', message: '',
   })
+
+  const addCompanion = () => {
+    if (form.companion_names.length < 9) {
+      setForm({ ...form, companion_names: [...form.companion_names, ''] })
+    }
+  }
+
+  const removeCompanion = (idx: number) => {
+    setForm({ ...form, companion_names: form.companion_names.filter((_, i) => i !== idx) })
+  }
+
+  const updateCompanion = (idx: number, value: string) => {
+    const names = [...form.companion_names]
+    names[idx] = value
+    setForm({ ...form, companion_names: names })
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -84,8 +101,8 @@ export default function RSVPForm() {
           >
             {[
               { name: 'guest_name', label: 'Seu nome completo *', type: 'text', required: true },
-              { name: 'email', label: 'E-mail (para receber confirmação)', type: 'email', required: false },
-              { name: 'phone', label: 'WhatsApp', type: 'tel', required: false },
+              { name: 'email', label: 'E-mail (opcional)', type: 'email', required: false },
+              { name: 'phone', label: 'WhatsApp (opcional)', type: 'tel', required: false },
             ].map((f) => (
               <div key={f.name}>
                 <label className="block text-xs uppercase tracking-widest text-[#4a4a4a] mb-1">{f.label}</label>
@@ -101,14 +118,45 @@ export default function RSVPForm() {
             {attending && (
               <>
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-[#4a4a4a] mb-1">Número de pessoas (incluindo você)</label>
-                  <input
-                    type="number" min={1} max={10}
-                    value={form.guests_count}
-                    onChange={(e) => setForm({ ...form, guests_count: Number(e.target.value) })}
-                    className="w-full border border-[#e8d5b0] bg-white px-4 py-3 text-sm text-[#2c2c2c] focus:outline-none focus:border-[#c9a96e] transition-colors"
-                  />
+                  <label className="block text-xs uppercase tracking-widest text-[#4a4a4a] mb-2">
+                    Acompanhantes da família
+                  </label>
+                  {form.companion_names.length === 0 && (
+                    <p className="text-xs text-[#4a4a4a] mb-3">
+                      Se você virá com familiares, adicione o nome de cada um abaixo.
+                    </p>
+                  )}
+                  <div className="space-y-2">
+                    {form.companion_names.map((name, idx) => (
+                      <div key={idx} className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder={`Nome do acompanhante ${idx + 1}`}
+                          value={name}
+                          onChange={(e) => updateCompanion(idx, e.target.value)}
+                          className="flex-1 border border-[#e8d5b0] bg-white px-4 py-3 text-sm text-[#2c2c2c] focus:outline-none focus:border-[#c9a96e] transition-colors"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeCompanion(idx)}
+                          className="px-4 border border-[#e8d5b0] text-[#4a4a4a] hover:border-red-300 hover:text-red-500 transition-colors text-lg leading-none"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  {form.companion_names.length < 9 && (
+                    <button
+                      type="button"
+                      onClick={addCompanion}
+                      className="mt-3 text-sm text-[#c9a96e] hover:text-[#a07840] transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      + Adicionar acompanhante
+                    </button>
+                  )}
                 </div>
+
                 <div>
                   <label className="block text-xs uppercase tracking-widest text-[#4a4a4a] mb-1">Restrições alimentares</label>
                   <input

@@ -4,6 +4,11 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { RsvpResponse } from '@/lib/types'
 
+function parseCompanions(raw: string | null): string[] {
+  if (!raw) return []
+  try { return JSON.parse(raw) } catch { return [] }
+}
+
 export default function AdminRsvpPage() {
   const [responses, setResponses] = useState<RsvpResponse[]>([])
   const [filter, setFilter] = useState<'all' | 'yes' | 'no'>('all')
@@ -22,10 +27,11 @@ export default function AdminRsvpPage() {
   const totalGuests = responses.filter((r) => r.attending).reduce((sum, r) => sum + r.guests_count, 0)
 
   const exportCsv = () => {
-    const header = 'Nome,Email,Telefone,Vai,Acompanhantes,Restrições,Mensagem,Data\n'
-    const rows = responses.map((r) =>
-      `"${r.guest_name}","${r.email || ''}","${r.phone || ''}","${r.attending ? 'Sim' : 'Não'}",${r.guests_count},"${r.dietary_restrictions || ''}","${r.message || ''}","${new Date(r.created_at).toLocaleDateString('pt-BR')}"`
-    ).join('\n')
+    const header = 'Nome,Email,Telefone,Vai,Total,Acompanhantes,Restrições,Mensagem,Data\n'
+    const rows = responses.map((r) => {
+      const companions = parseCompanions(r.companion_names)
+      return `"${r.guest_name}","${r.email || ''}","${r.phone || ''}","${r.attending ? 'Sim' : 'Não'}",${r.guests_count},"${companions.join('; ')}","${r.dietary_restrictions || ''}","${r.message || ''}","${new Date(r.created_at).toLocaleDateString('pt-BR')}"`
+    }).join('\n')
     const blob = new Blob([header + rows], { type: 'text/csv' })
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
@@ -38,7 +44,7 @@ export default function AdminRsvpPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-serif text-[#2c2c2c]">Confirmações de Presença</h1>
-          <p className="text-sm text-[#4a4a4a] mt-1">Total de convidados confirmados: <strong>{totalGuests}</strong></p>
+          <p className="text-sm text-[#4a4a4a] mt-1">Total de pessoas confirmadas: <strong>{totalGuests}</strong></p>
         </div>
         <button onClick={exportCsv} className="px-4 py-2 bg-[#2c2c2c] text-white text-sm rounded hover:bg-[#4a4a4a] transition-colors">
           Exportar CSV
@@ -70,26 +76,41 @@ export default function AdminRsvpPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filtered.map((r) => (
-                <tr key={r.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-[#2c2c2c]">
-                    {r.guest_name}
-                    {r.message && <p className="text-xs text-[#4a4a4a] font-normal italic mt-1">"{r.message}"</p>}
-                  </td>
-                  <td className="px-4 py-3 text-[#4a4a4a]">
-                    <p>{r.email}</p>
-                    <p>{r.phone}</p>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-1 rounded-full ${r.attending ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
-                      {r.attending ? 'Sim' : 'Não'}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-center text-[#4a4a4a]">{r.guests_count}</td>
-                  <td className="px-4 py-3 text-[#4a4a4a] text-xs">{r.dietary_restrictions || '—'}</td>
-                  <td className="px-4 py-3 text-[#4a4a4a] text-xs">{new Date(r.created_at).toLocaleDateString('pt-BR')}</td>
-                </tr>
-              ))}
+              {filtered.map((r) => {
+                const companions = parseCompanions(r.companion_names)
+                return (
+                  <tr key={r.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 font-medium text-[#2c2c2c]">
+                      {r.guest_name}
+                      {r.message && <p className="text-xs text-[#4a4a4a] font-normal italic mt-1">"{r.message}"</p>}
+                    </td>
+                    <td className="px-4 py-3 text-[#4a4a4a]">
+                      <p>{r.email}</p>
+                      <p>{r.phone}</p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`text-xs px-2 py-1 rounded-full ${r.attending ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+                        {r.attending ? 'Sim' : 'Não'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-[#4a4a4a]">
+                      {companions.length > 0 ? (
+                        <ul className="text-xs space-y-0.5">
+                          {companions.map((name, i) => (
+                            <li key={i} className="flex items-center gap-1">
+                              <span className="text-[#c9a96e]">·</span> {name}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <span className="text-xs text-gray-400">Somente {r.guest_name.split(' ')[0]}</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-[#4a4a4a] text-xs">{r.dietary_restrictions || '—'}</td>
+                    <td className="px-4 py-3 text-[#4a4a4a] text-xs">{new Date(r.created_at).toLocaleDateString('pt-BR')}</td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         )}

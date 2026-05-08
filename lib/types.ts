@@ -36,6 +36,7 @@ export interface RsvpResponse {
   phone: string | null
   attending: boolean
   guests_count: number
+  companion_names: string | null
   dietary_restrictions: string | null
   message: string | null
   created_at: string
