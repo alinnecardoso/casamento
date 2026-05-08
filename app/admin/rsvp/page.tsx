@@ -27,10 +27,10 @@ export default function AdminRsvpPage() {
   const totalGuests = responses.filter((r) => r.attending).reduce((sum, r) => sum + r.guests_count, 0)
 
   const exportCsv = () => {
-    const header = 'Nome,Email,Telefone,Vai,Total,Acompanhantes,Restrições,Mensagem,Data\n'
+    const header = 'Nome,Email,Telefone,Vai,Total,Acompanhantes,Mensagem,Data\n'
     const rows = responses.map((r) => {
       const companions = parseCompanions(r.companion_names)
-      return `"${r.guest_name}","${r.email || ''}","${r.phone || ''}","${r.attending ? 'Sim' : 'Não'}",${r.guests_count},"${companions.join('; ')}","${r.dietary_restrictions || ''}","${r.message || ''}","${new Date(r.created_at).toLocaleDateString('pt-BR')}"`
+      return `"${r.guest_name}","${r.email || ''}","${r.phone || ''}","${r.attending ? 'Sim' : 'Não'}",${r.guests_count},"${companions.join('; ')}","${r.message || ''}","${new Date(r.created_at).toLocaleDateString('pt-BR')}"`
     }).join('\n')
     const blob = new Blob([header + rows], { type: 'text/csv' })
     const a = document.createElement('a')
@@ -70,7 +70,7 @@ export default function AdminRsvpPage() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b">
               <tr>
-                {['Nome', 'Contato', 'Vai?', 'Acompanhantes', 'Restrições', 'Data'].map((h) => (
+                {['Nome', 'Contato', 'Vai?', 'Acompanhantes', 'Data'].map((h) => (
                   <th key={h} className="text-left px-4 py-3 text-xs uppercase tracking-widest text-[#4a4a4a]">{h}</th>
                 ))}
               </tr>
@@ -106,7 +106,6 @@ export default function AdminRsvpPage() {
                         <span className="text-xs text-gray-400">Somente {r.guest_name.split(' ')[0]}</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-[#4a4a4a] text-xs">{r.dietary_restrictions || '—'}</td>
                     <td className="px-4 py-3 text-[#4a4a4a] text-xs">{new Date(r.created_at).toLocaleDateString('pt-BR')}</td>
                   </tr>
                 )

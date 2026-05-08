@@ -11,7 +11,7 @@ export default function RSVPForm() {
   const [form, setForm] = useState({
     guest_name: '', email: '', phone: '',
     companion_names: [] as string[],
-    dietary_restrictions: '', message: '',
+    message: '',
   })
 
   const addCompanion = () => {
@@ -157,15 +157,6 @@ export default function RSVPForm() {
                   )}
                 </div>
 
-                <div>
-                  <label className="block text-xs uppercase tracking-widest text-[#4a4a4a] mb-1">Restrições alimentares</label>
-                  <input
-                    type="text" placeholder="Vegetariano, alergia a amendoim, etc."
-                    value={form.dietary_restrictions}
-                    onChange={(e) => setForm({ ...form, dietary_restrictions: e.target.value })}
-                    className="w-full border border-[#e8d5b0] bg-white px-4 py-3 text-sm text-[#2c2c2c] focus:outline-none focus:border-[#c9a96e] transition-colors"
-                  />
-                </div>
               </>
             )}
 
