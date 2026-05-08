@@ -4,6 +4,14 @@ import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 
+function maskPhone(value: string): string {
+  const d = value.replace(/\D/g, '').slice(0, 11)
+  if (d.length <= 2) return d.length ? `(${d}` : ''
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`
+}
+
 interface ExistingRsvp {
   attending: boolean
   guest_name: string
@@ -155,8 +163,9 @@ export default function RSVPForm() {
                 placeholder="(11) 99999-9999"
                 value={form.phone}
                 onChange={(e) => {
-                  setForm({ ...form, phone: e.target.value })
-                  checkExisting(e.target.value)
+                  const masked = maskPhone(e.target.value)
+                  setForm({ ...form, phone: masked })
+                  checkExisting(masked)
                 }}
                 className="w-full border border-[#e8d5b0] bg-white px-4 py-3 text-sm text-[#2c2c2c] focus:outline-none focus:border-[#c9a96e] transition-colors"
               />
