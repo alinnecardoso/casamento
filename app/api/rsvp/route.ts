@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
           },
         })
       }
-    } catch { /* optional */ }
+    } catch (err) { console.error('[Sheets]', err) }
   }
 
   return NextResponse.json({ ok: true, updated: !!existing })
