@@ -70,9 +70,9 @@ export default function Lightbox({ photo, onClose, onPrev, onNext }: Props) {
             )}
           </motion.div>
 
-          <button onClick={onClose} className="absolute top-4 right-4 text-white/60 hover:text-white text-3xl w-10 h-10 flex items-center justify-center">✕</button>
-          <button onClick={(e) => { e.stopPropagation(); onPrev() }} className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-5xl px-2 py-4">‹</button>
-          <button onClick={(e) => { e.stopPropagation(); onNext() }} className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-5xl px-2 py-4">›</button>
+          <button onClick={onClose} className="absolute top-4 right-4 text-white/60 hover:text-white text-2xl w-12 h-12 flex items-center justify-center">✕</button>
+          <button onClick={(e) => { e.stopPropagation(); onPrev() }} className="absolute left-1 md:left-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-5xl w-12 h-16 flex items-center justify-center">‹</button>
+          <button onClick={(e) => { e.stopPropagation(); onNext() }} className="absolute right-1 md:right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-5xl w-12 h-16 flex items-center justify-center">›</button>
         </motion.div>
       )}
     </AnimatePresence>

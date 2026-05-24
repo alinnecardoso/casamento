@@ -19,7 +19,7 @@ export default async function LocalPage() {
         <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url('${config.hero_image_url}')` }} />
         <div className="relative z-10 px-6 pb-10 max-w-5xl mx-auto w-full">
           <p className="text-xs uppercase tracking-[0.3em] text-[#c9a96e] mb-2">Onde estaremos</p>
-          <h1 className="font-serif text-4xl md:text-5xl text-white font-light">Local & Data</h1>
+          <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl text-white font-light">Local & Data</h1>
         </div>
       </div>
 
@@ -31,7 +31,7 @@ export default async function LocalPage() {
 
         <div className="grid md:grid-cols-2 gap-8">
           <AnimatedSection>
-            <div className="bg-white rounded-sm border border-[#e8d5b0] p-8 h-full">
+            <div className="bg-white rounded-sm border border-[#e8d5b0] p-5 sm:p-8 h-full">
               <div className="w-12 h-12 rounded-full bg-[#c9a96e]/10 flex items-center justify-center mb-6">
                 <span className="text-[#c9a96e] text-xl">⛪</span>
               </div>
@@ -48,7 +48,7 @@ export default async function LocalPage() {
           </AnimatedSection>
 
           <AnimatedSection delay={0.2}>
-            <div className="bg-white rounded-sm border border-[#e8d5b0] p-8 h-full">
+            <div className="bg-white rounded-sm border border-[#e8d5b0] p-5 sm:p-8 h-full">
               <div className="w-12 h-12 rounded-full bg-[#c9a96e]/10 flex items-center justify-center mb-6">
                 <span className="text-[#c9a96e] text-xl">🥂</span>
               </div>

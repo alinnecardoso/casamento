@@ -51,7 +51,7 @@ export default function PresentsClient({ gifts, pixKey, pixName, heroImageUrl }:
         {heroImageUrl && <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url('${heroImageUrl}')` }} />}
         <div className="relative z-10 px-6 pb-10 max-w-5xl mx-auto w-full">
           <p className="text-xs uppercase tracking-[0.3em] text-[#c9a96e] mb-2">Presenteie com amor</p>
-          <h1 className="font-serif text-4xl md:text-5xl text-white font-light">Lista de Presentes</h1>
+          <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl text-white font-light">Lista de Presentes</h1>
         </div>
       </div>
 
@@ -60,14 +60,14 @@ export default function PresentsClient({ gifts, pixKey, pixName, heroImageUrl }:
         {/* PIX banner geral */}
         {pixKey && (
           <AnimatedSection className="mb-16">
-            <div className="relative overflow-hidden rounded-2xl bg-[#2c2c2c] p-8 md:p-12 text-center">
+            <div className="relative overflow-hidden rounded-2xl bg-[#2c2c2c] p-6 sm:p-8 md:p-12 text-center">
               {heroImageUrl && (
                 <div className="absolute inset-0 opacity-10"
                   style={{ backgroundImage: `url('${heroImageUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
               )}
               <div className="relative z-10">
                 <p className="text-xs uppercase tracking-[0.3em] text-[#c9a96e] mb-3">Prefere presentear em dinheiro?</p>
-                <p className="font-serif text-2xl md:text-3xl text-white mb-2">Qualquer valor é bem-vindo</p>
+                <p className="font-serif text-xl sm:text-2xl md:text-3xl text-white mb-2">Qualquer valor é bem-vindo</p>
                 <p className="text-white/60 text-sm mb-8">Contribua para os nossos sonhos via PIX, de forma rápida e segura.</p>
                 <button
                   onClick={() => setModal({ open: true })}

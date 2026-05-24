@@ -65,7 +65,7 @@ export default function Navbar({ coupleName }: { coupleName?: string }) {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className={`md:hidden flex flex-col gap-1.5 p-2 ${isHome && !scrolled ? 'text-white' : 'text-[#2c2c2c]'}`}
+            className={`md:hidden flex flex-col gap-1.5 w-11 h-11 items-center justify-center ${isHome && !scrolled ? 'text-white' : 'text-[#2c2c2c]'}`}
             aria-label="Menu"
           >
             <motion.span animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 8 : 0 }} className="block w-6 h-px bg-current origin-center" />
@@ -91,7 +91,7 @@ export default function Navbar({ coupleName }: { coupleName?: string }) {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 260 }}
-              className="fixed top-0 right-0 h-full w-72 bg-white z-50 md:hidden flex flex-col pt-20 px-8 gap-6 shadow-2xl"
+              className="fixed top-0 right-0 h-full w-[min(18rem,85vw)] bg-white z-50 md:hidden flex flex-col pt-20 px-6 sm:px-8 gap-6 shadow-2xl"
             >
               <p className="font-serif text-2xl text-[#c9a96e] mb-4">Menu</p>
               {links.map((link) => (

@@ -20,7 +20,7 @@ export default function GalleryClient({ photos, heroImageUrl }: { photos: Galler
         {heroImageUrl && <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url('${heroImageUrl}')` }} />}
         <div className="relative z-10 px-6 pb-10 max-w-5xl mx-auto w-full">
           <p className="text-xs uppercase tracking-[0.3em] text-[#c9a96e] mb-2">Memórias</p>
-          <h1 className="font-serif text-4xl md:text-5xl text-white font-light">Galeria de Fotos</h1>
+          <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl text-white font-light">Galeria de Fotos</h1>
         </div>
       </div>
 

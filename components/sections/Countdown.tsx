@@ -22,7 +22,7 @@ function getTimeLeft(dateStr: string) {
 function FlipUnit({ value, label }: { value: string; label: string }) {
   return (
     <div className="flex flex-col items-center gap-2">
-      <div className="relative bg-[#2c2c2c] rounded-lg w-20 md:w-28 h-20 md:h-28 flex items-center justify-center overflow-hidden">
+      <div className="relative bg-[#2c2c2c] rounded-lg w-16 sm:w-20 md:w-28 h-16 sm:h-20 md:h-28 flex items-center justify-center overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.span
             key={value}
@@ -30,7 +30,7 @@ function FlipUnit({ value, label }: { value: string; label: string }) {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 40, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="font-serif text-4xl md:text-5xl text-white absolute"
+            className="font-serif text-2xl sm:text-3xl md:text-5xl text-white absolute"
           >
             {value}
           </motion.span>
@@ -57,13 +57,13 @@ export default function Countdown({ weddingDate }: { weddingDate: string }) {
           <h2 className="font-serif text-3xl md:text-4xl text-[#2c2c2c] mb-12">Falta pouco para o grande dia</h2>
         </AnimatedSection>
         <AnimatedSection delay={0.2}>
-          <div className="flex items-center justify-center gap-4 md:gap-8">
+          <div className="flex items-center justify-center gap-2 sm:gap-4 md:gap-8">
             <FlipUnit value={String(time.days)} label="dias" />
-            <span className="font-serif text-3xl text-[#c9a96e] mb-8">:</span>
+            <span className="font-serif text-xl sm:text-2xl md:text-3xl text-[#c9a96e] mb-8">:</span>
             <FlipUnit value={pad(time.hours)} label="horas" />
-            <span className="font-serif text-3xl text-[#c9a96e] mb-8">:</span>
+            <span className="font-serif text-xl sm:text-2xl md:text-3xl text-[#c9a96e] mb-8">:</span>
             <FlipUnit value={pad(time.minutes)} label="minutos" />
-            <span className="font-serif text-3xl text-[#c9a96e] mb-8">:</span>
+            <span className="font-serif text-xl sm:text-2xl md:text-3xl text-[#c9a96e] mb-8">:</span>
             <FlipUnit value={pad(time.seconds)} label="segundos" />
           </div>
         </AnimatedSection>
