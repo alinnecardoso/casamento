@@ -12,21 +12,21 @@ export const supabaseAdmin = createClient(
 )
 
 export const defaultConfig: SiteConfig = {
-  couple_name: 'Noiva & Noivo',
+  couple_name: 'Alinne & Gabriel',
   wedding_date: '2026-11-22',
-  ceremony_address: 'Endereço da Cerimônia',
-  ceremony_time: '16h00',
-  reception_address: 'Endereço da Recepção',
+  ceremony_address: 'Império Eventos — Votorantim, SP',
+  ceremony_time: '17h00',
+  reception_address: 'Império Eventos — Votorantim, SP',
   reception_time: '19h00',
   pix_key: '',
-  pix_name: 'Casal',
-  our_story_text: 'Nossa história começa aqui...',
+  pix_name: 'Alinne & Gabriel',
+  our_story_text: 'Em 2019, Alinne foi convidada para um teatro de Páscoa na igreja. Ela foi, teve uma experiência com Deus naquele dia — e nunca mais parou de ir. Gabriel estava no palco. Ela o notou, mas não deu muita bola — afinal, não ia vê-lo de novo.\n\nAí em junho, numa reunião de adolescentes, os dois se encontraram de verdade — dessa vez ele percebeu.\n\nA amizade foi crescendo aos poucos, sem pressa. Em 2022, quando Alinne completou 18 anos, Gabriel pediu em namoro. Em 2025, ele a chamou pra um voo de balão em Boituva — "só um passeio". Alinne já desconfiava de alguma coisa. Quando o balão pousou, ele ajoelhou. Ela disse sim, como se não estivesse esperando.\n\nNos vemos dia 22 de novembro de 2026!',
   hero_subtitle: 'Estamos nos casando!',
   hero_image_url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=80',
   story_image_url: 'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=800&q=80',
   rsvp_deadline: '31 de outubro de 2026',
   dress_code: 'Traje passeio fino',
-  wedding_tips: 'Estacionamento disponível no local.',
+  wedding_tips: '',
   couple_email: '',
 }
 
