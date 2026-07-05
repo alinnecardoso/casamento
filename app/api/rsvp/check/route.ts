@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 
 function normalizePhone(phone: string): string {
   const digits = phone.replace(/\D/g, '')
@@ -15,25 +14,39 @@ export async function GET(req: NextRequest) {
 
   const phone = normalizePhone(raw)
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY!
-  )
+  if (!process.env.GOOGLE_SHEET_ID) {
+    return NextResponse.json({ found: false })
+  }
 
-  const { data } = await supabase
-    .from('rsvp_responses')
-    .select('guest_name, attending, created_at')
-    .eq('phone', phone)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single()
+  try {
+    const { google } = await import('googleapis')
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      },
+      scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+    })
+    const sheets = google.sheets({ version: 'v4', auth })
 
-  if (!data) return NextResponse.json({ found: false })
+    const result = await sheets.spreadsheets.values.get({
+      spreadsheetId: process.env.GOOGLE_SHEET_ID,
+      range: 'Respostas!A:H',
+    })
 
-  return NextResponse.json({
-    found: true,
-    attending: data.attending,
-    guest_name: data.guest_name,
-    created_at: data.created_at,
-  })
+    const rows = result.data.values || []
+    const rowIndex = rows.findIndex((r, i) => i > 0 && normalizePhone(r[3] || '') === phone)
+
+    if (rowIndex < 0) return NextResponse.json({ found: false })
+
+    const row = rows[rowIndex]
+    return NextResponse.json({
+      found: true,
+      attending: row[4] === 'Sim',
+      guest_name: row[1] || '',
+      created_at: row[0] || '',
+    })
+  } catch {
+    return NextResponse.json({ found: false })
+  }
 }

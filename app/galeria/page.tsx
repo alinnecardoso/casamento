@@ -1,7 +1,5 @@
-import { getSiteConfig, defaultConfig } from '@/lib/supabase'
+import { defaultConfig } from '@/lib/supabase'
 import GalleryClient from './GalleryClient'
-
-export const revalidate = 60
 
 const localPhotos = Array.from({ length: 11 }, (_, i) => ({
   id: String(i),
@@ -11,7 +9,6 @@ const localPhotos = Array.from({ length: 11 }, (_, i) => ({
   created_at: '',
 }))
 
-export default async function GaleriaPage() {
-  const config = await getSiteConfig().catch(() => defaultConfig)
-  return <GalleryClient photos={localPhotos} heroImageUrl={config.hero_image_url} />
+export default function GaleriaPage() {
+  return <GalleryClient photos={localPhotos} heroImageUrl={defaultConfig.hero_image_url} />
 }

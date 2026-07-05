@@ -1,11 +1,9 @@
-import { getSiteConfig, defaultConfig } from '@/lib/supabase'
+import { defaultConfig } from '@/lib/supabase'
 import PageTransition from '@/components/layout/PageTransition'
 import RSVPForm from './RSVPForm'
 
-export const revalidate = 60
-
-export default async function ConfirmarPresencaPage() {
-  const config = await getSiteConfig().catch(() => defaultConfig)
+export default function ConfirmarPresencaPage() {
+  const config = defaultConfig
 
   return (
     <PageTransition>
@@ -21,7 +19,7 @@ export default async function ConfirmarPresencaPage() {
         <div className="text-center mb-12">
           <p className="text-[#4a4a4a] leading-relaxed">
             Por favor, confirme sua presença até{' '}
-            <strong className="text-[#2c2c2c]">{config.rsvp_deadline || '31 de outubro de 2026'}</strong>.
+            <strong className="text-[#2c2c2c]">{config.rsvp_deadline}</strong>.
             <br />Sua resposta nos ajuda a planejar um dia perfeito.
           </p>
         </div>

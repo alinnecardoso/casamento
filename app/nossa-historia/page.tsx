@@ -1,30 +1,26 @@
-import { getSiteConfig, getTimelineEvents, defaultConfig } from '@/lib/supabase'
+import { defaultConfig, defaultTimeline } from '@/lib/supabase'
 import PageTransition from '@/components/layout/PageTransition'
 import AnimatedSection from '@/components/ui/AnimatedSection'
 import Image from 'next/image'
 
-export const revalidate = 60
-
-const defaultTimeline = [
-  { id: '1', year: '2019', title: 'Nosso primeiro encontro', description: 'Quando tudo começou...', position: 0, created_at: '' },
-  { id: '2', year: '2021', title: 'Nos tornamos inseparáveis', description: 'A vida ficou mais bonita...', position: 1, created_at: '' },
-  { id: '3', year: '2024', title: 'O pedido de casamento', description: 'Um sim que mudou tudo...', position: 2, created_at: '' },
-  { id: '4', year: '2026', title: 'O grande dia', description: 'Nossa história continua...', position: 3, created_at: '' },
-]
-
-export default async function NossaHistoriaPage() {
-  const [config, timeline] = await Promise.all([
-    getSiteConfig().catch(() => defaultConfig),
-    getTimelineEvents().catch(() => defaultTimeline),
-  ])
-
-  const timelineItems = timeline.length > 0 ? timeline : defaultTimeline
+export default function NossaHistoriaPage() {
+  const config = defaultConfig
+  const timelineItems = defaultTimeline
 
   return (
     <PageTransition>
       <div className="relative h-56 md:h-80 flex items-end bg-[#2c2c2c] overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: `url('${config.story_image_url}')` }} />
-        <div className="relative z-10 px-4 sm:px-6 pb-8 md:pb-12 max-w-5xl mx-auto w-full">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('${config.hero_image_url}')`,
+            filter: 'brightness(0.82) contrast(1.08) saturate(1.2)',
+          }}
+        />
+        <div className="absolute inset-0 z-10" style={{ background: 'radial-gradient(ellipse at center, transparent 35%, rgba(20,14,10,0.75) 100%)' }} />
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/30 via-transparent to-black/65" />
+        <div className="absolute inset-0 z-10 bg-[#c9a96e]/10" />
+        <div className="relative z-20 px-4 sm:px-6 pb-8 md:pb-12 max-w-5xl mx-auto w-full">
           <p className="text-xs uppercase tracking-[0.3em] text-[#c9a96e] mb-2">Nossa História</p>
           <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl text-white font-light">{config.couple_name}</h1>
         </div>
@@ -35,7 +31,7 @@ export default async function NossaHistoriaPage() {
           <AnimatedSection>
             <div className="relative">
               <div className="aspect-[3/4] overflow-hidden rounded-sm">
-                <Image src={config.story_image_url} alt={config.couple_name} width={600} height={800} className="w-full h-full object-cover" />
+                <Image src={config.story_image_url} alt={config.couple_name} width={600} height={800} className="w-full h-full object-cover" style={{ filter: 'brightness(0.92) contrast(1.05) saturate(0.9) sepia(0.15)' }} />
               </div>
               <div className="absolute -bottom-3 -left-3 sm:-bottom-6 sm:-left-6 w-20 h-20 sm:w-32 sm:h-32 border-2 border-[#c9a96e] -z-10" />
             </div>

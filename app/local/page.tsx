@@ -1,11 +1,9 @@
-import { getSiteConfig, defaultConfig } from '@/lib/supabase'
+import { defaultConfig } from '@/lib/supabase'
 import PageTransition from '@/components/layout/PageTransition'
 import AnimatedSection from '@/components/ui/AnimatedSection'
 
-export const revalidate = 60
-
-export default async function LocalPage() {
-  const config = await getSiteConfig().catch(() => defaultConfig)
+export default function LocalPage() {
+  const config = defaultConfig
 
   const mapsUrl = (address: string) =>
     `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`

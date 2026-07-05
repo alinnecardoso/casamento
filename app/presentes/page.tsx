@@ -1,8 +1,6 @@
-import { getSiteConfig, supabase } from '@/lib/supabase'
+import { defaultConfig } from '@/lib/supabase'
 import PresentsClient from './PresentsClient'
 import { Gift } from '@/lib/types'
-
-export const revalidate = 60
 
 const defaultGifts: Gift[] = [
   { id: '1', name: 'Jogo de Panelas', description: 'Para nossa nova cozinha', price: 350, store_link: null, image_url: null, available: true, position: 0, created_at: '' },
@@ -11,15 +9,12 @@ const defaultGifts: Gift[] = [
   { id: '4', name: 'Liquidificador', description: '', price: 180, store_link: null, image_url: null, available: true, position: 3, created_at: '' },
 ]
 
-export default async function PresentesPage() {
-  const [config, { data: gifts }] = await Promise.all([
-    getSiteConfig(),
-    supabase.from('gifts').select('*').eq('available', true).order('position'),
-  ])
+export default function PresentesPage() {
+  const config = defaultConfig
 
   return (
     <PresentsClient
-      gifts={(gifts as Gift[]) || defaultGifts}
+      gifts={defaultGifts}
       pixKey={config.pix_key}
       pixName={config.pix_name}
       heroImageUrl={config.hero_image_url}

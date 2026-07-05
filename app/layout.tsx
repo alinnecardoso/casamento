@@ -3,7 +3,7 @@ import { Playfair_Display, Lato } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
 import './globals.css'
 import Navbar from '@/components/layout/Navbar'
-import { getSiteConfig, defaultConfig } from '@/lib/supabase'
+import { defaultConfig } from '@/lib/supabase'
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -25,8 +25,8 @@ export const metadata: Metadata = {
   description: 'Site oficial do nosso casamento',
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const config = await getSiteConfig().catch(() => defaultConfig)
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const config = defaultConfig
 
   return (
     <html lang="pt-BR" className={`${playfair.variable} ${lato.variable} h-full antialiased`}>

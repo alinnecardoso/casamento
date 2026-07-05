@@ -2,16 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 
 const links = [
   { href: '/admin', label: 'Dashboard', icon: '📊' },
-  { href: '/admin/configuracoes', label: 'Configurações', icon: '⚙️' },
+  { href: '/admin/rsvp', label: 'Confirmações', icon: '✅' },
   { href: '/admin/nossa-historia', label: 'Nossa História', icon: '📖' },
   { href: '/admin/presentes', label: 'Presentes', icon: '🎁' },
-  { href: '/admin/pagamentos', label: 'Pagamentos', icon: '💰' },
   { href: '/admin/galeria', label: 'Galeria', icon: '🖼️' },
-  { href: '/admin/rsvp', label: 'Confirmações', icon: '✅' },
 ]
 
 export default function AdminNav() {
@@ -19,7 +16,7 @@ export default function AdminNav() {
   const router = useRouter()
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    await fetch('/api/admin/logout', { method: 'POST' })
     router.push('/admin/login')
     router.refresh()
   }

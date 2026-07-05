@@ -1,20 +1,21 @@
-import { getSiteConfig, supabase, defaultConfig } from '@/lib/supabase'
+import { defaultConfig } from '@/lib/supabase'
 import Hero from '@/components/sections/Hero'
 import Countdown from '@/components/sections/Countdown'
 import HomeStoryTeaser from '@/components/sections/HomeStoryTeaser'
 import HomeEventInfo from '@/components/sections/HomeEventInfo'
 import HomeGalleryPreview from '@/components/sections/HomeGalleryPreview'
 import HomeCTA from '@/components/sections/HomeCTA'
-import { GalleryPhoto } from '@/lib/types'
 
-export const revalidate = 60
+const localPhotos = [1, 2, 3, 4].map((n) => ({
+  id: String(n),
+  url: `/fotos/foto-0${n}.jpg`,
+  caption: null,
+  position: n,
+  created_at: '',
+}))
 
-export default async function HomePage() {
-  const [config, photosResult] = await Promise.all([
-    getSiteConfig().catch(() => defaultConfig),
-    supabase.from('gallery_photos').select('*').order('position').limit(4),
-  ])
-  const photos = (photosResult.data as GalleryPhoto[] | null)
+export default function HomePage() {
+  const config = defaultConfig
 
   return (
     <>
@@ -37,7 +38,7 @@ export default async function HomePage() {
         receptionAddress={config.reception_address}
         receptionTime={config.reception_time}
       />
-      <HomeGalleryPreview photos={photos || []} />
+      <HomeGalleryPreview photos={localPhotos} />
       <HomeCTA />
     </>
   )

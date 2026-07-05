@@ -1,8 +1,18 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
-import { RsvpResponse } from '@/lib/types'
+
+interface RsvpRow {
+  id: string
+  created_at: string
+  guest_name: string
+  email: string
+  phone: string
+  attending: boolean
+  guests_count: number
+  companion_names: string | null
+  message: string | null
+}
 
 function parseCompanions(raw: string | null): string[] {
   if (!raw) return []
@@ -10,12 +20,15 @@ function parseCompanions(raw: string | null): string[] {
 }
 
 export default function AdminRsvpPage() {
-  const [responses, setResponses] = useState<RsvpResponse[]>([])
+  const [responses, setResponses] = useState<RsvpRow[]>([])
   const [filter, setFilter] = useState<'all' | 'yes' | 'no'>('all')
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.from('rsvp_responses').select('*').order('created_at', { ascending: false })
-      .then(({ data }) => setResponses(data || []))
+    fetch('/api/admin/rsvp')
+      .then((r) => r.json())
+      .then((data) => { setResponses(data); setLoading(false) })
+      .catch(() => setLoading(false))
   }, [])
 
   const filtered = responses.filter((r) => {
@@ -30,7 +43,7 @@ export default function AdminRsvpPage() {
     const header = 'Nome,Email,Telefone,Vai,Total,Acompanhantes,Mensagem,Data\n'
     const rows = responses.map((r) => {
       const companions = parseCompanions(r.companion_names)
-      return `"${r.guest_name}","${r.email || ''}","${r.phone || ''}","${r.attending ? 'Sim' : 'Não'}",${r.guests_count},"${companions.join('; ')}","${r.message || ''}","${new Date(r.created_at).toLocaleDateString('pt-BR')}"`
+      return `"${r.guest_name}","${r.email || ''}","${r.phone || ''}","${r.attending ? 'Sim' : 'Não'}",${r.guests_count},"${companions.join('; ')}","${r.message || ''}","${r.created_at}"`
     }).join('\n')
     const blob = new Blob([header + rows], { type: 'text/csv' })
     const a = document.createElement('a')
@@ -64,7 +77,9 @@ export default function AdminRsvpPage() {
       </div>
 
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        {filtered.length === 0 ? (
+        {loading ? (
+          <p className="text-center text-[#4a4a4a] py-12">Carregando...</p>
+        ) : filtered.length === 0 ? (
           <p className="text-center text-[#4a4a4a] py-12">Nenhuma confirmação ainda.</p>
         ) : (
           <table className="w-full text-sm">
@@ -82,7 +97,7 @@ export default function AdminRsvpPage() {
                   <tr key={r.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 font-medium text-[#2c2c2c]">
                       {r.guest_name}
-                      {r.message && <p className="text-xs text-[#4a4a4a] font-normal italic mt-1">"{r.message}"</p>}
+                      {r.message && <p className="text-xs text-[#4a4a4a] font-normal italic mt-1">&ldquo;{r.message}&rdquo;</p>}
                     </td>
                     <td className="px-4 py-3 text-[#4a4a4a]">
                       <p>{r.email}</p>
@@ -106,7 +121,7 @@ export default function AdminRsvpPage() {
                         <span className="text-xs text-gray-400">Somente {r.guest_name.split(' ')[0]}</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-[#4a4a4a] text-xs">{new Date(r.created_at).toLocaleDateString('pt-BR')}</td>
+                    <td className="px-4 py-3 text-[#4a4a4a] text-xs">{r.created_at}</td>
                   </tr>
                 )
               })}

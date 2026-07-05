@@ -1,12 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
 export default function AdminLoginPage() {
-  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -16,13 +14,17 @@ export default function AdminLoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
-      setError('Email ou senha incorretos')
-      setLoading(false)
-    } else {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    })
+    if (res.ok) {
       router.push('/admin')
       router.refresh()
+    } else {
+      setError('Senha incorreta')
+      setLoading(false)
     }
   }
 
@@ -39,14 +41,6 @@ export default function AdminLoginPage() {
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-xs uppercase tracking-widest text-[#4a4a4a] mb-1">E-mail</label>
-            <input
-              type="email" required value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-[#e8d5b0] px-4 py-3 text-sm focus:outline-none focus:border-[#c9a96e] transition-colors"
-            />
-          </div>
           <div>
             <label className="block text-xs uppercase tracking-widest text-[#4a4a4a] mb-1">Senha</label>
             <input
