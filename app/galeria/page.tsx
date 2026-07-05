@@ -1,7 +1,7 @@
 import { defaultConfig } from '@/lib/supabase'
 import GalleryClient from './GalleryClient'
 
-const localPhotos = Array.from({ length: 11 }, (_, i) => ({
+const localPhotos = Array.from({ length: 39 }, (_, i) => ({
   id: String(i),
   url: `/fotos/foto-${String(i + 1).padStart(2, '0')}.jpg`,
   caption: null,
